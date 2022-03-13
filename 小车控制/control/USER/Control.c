@@ -1,7 +1,7 @@
 #include "UI.h"
-extern uint16 ServoPwmDuty[8];
-#define MIN_DIS_AVOID  70 //testing
-u8 time=0;
+extern uint16 ServoPwmDuty[8];//在其他文件中定义了uint16...在此直接使用该变量
+#define MIN_DIS_AVOID  70 
+u8 time=0;//u8类型是 unsigned char
 //#define	LED PDout(2)  
 u8 led_time=0;
 int Motor_Speed[4];			//电机速度值
