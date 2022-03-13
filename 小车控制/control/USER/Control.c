@@ -10,7 +10,7 @@ int Motor_DrctAdj[4];		//电机转向调整
 unsigned char LX=127;
 unsigned char LY=127;
 
-PID PID_Motor[4];
+PID PID_Motor[4]; //调整小车输入速度与输出速度的函数
 
 u8 ARMED=0;
 float Voltage_Count,Voltage_All;  //电压采样相关变量
@@ -27,7 +27,7 @@ u32 key;
 void Ps2_Control(void);
 void Avoid_Control(void);
 
-void TIM6_IRQHandler(void)
+void TIM6_IRQHandler(void) //TIM6为STM32基础定时器；中断服务函数；
 { 		    		  			    
 	if(TIM6->SR&0X0001)//溢出中断
 	{		
