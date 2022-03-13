@@ -1,11 +1,11 @@
 #include "UI.h"
 extern uint16 ServoPwmDuty[8];
-#define MIN_DIS_AVOID  70
+#define MIN_DIS_AVOID  70 //testing
 u8 time=0;
 //#define	LED PDout(2)  
 u8 led_time=0;
-int Motor_Speed[4];			//µç»úËÙ¶ÈÖµ
-int Motor_DrctAdj[4];		//µç»ú×ªÏòµ÷Õû
+int Motor_Speed[4];			//ç”µæœºé€Ÿåº¦å€¼
+int Motor_DrctAdj[4];		//ç”µæœºè½¬å‘è°ƒæ•´
 
 unsigned char LX=127;
 unsigned char LY=127;
@@ -13,7 +13,7 @@ unsigned char LY=127;
 PID PID_Motor[4];
 
 u8 ARMED=0;
-float Voltage_Count,Voltage_All;  //µçÑ¹²ÉÑùÏà¹Ø±äÁ¿
+float Voltage_Count,Voltage_All;  //ç”µå‹é‡‡æ ·ç›¸å…³å˜é‡
 unsigned char nmr=0;
 
 short int RC_Last=0;
@@ -29,7 +29,7 @@ void Avoid_Control(void);
 
 void TIM6_IRQHandler(void)
 { 		    		  			    
-	if(TIM6->SR&0X0001)//Òç³öÖĞ¶Ï
+	if(TIM6->SR&0X0001)//æº¢å‡ºä¸­æ–­
 	{		
 		Control_Flag=1;		
 		if(++ServoCount>=4)
@@ -38,33 +38,33 @@ void TIM6_IRQHandler(void)
 			ServoPwmDutyCompare();
 		}
 		Voltage_All+=Get_Battery_vot();
-		if(++Voltage_Count==100) Voltage=Voltage_All/100,Voltage_All=0,Voltage_Count=0;//ÇóÆ½¾ùÖµ »ñÈ¡µç³ØµçÑ¹	   
-		if(KEY==0)	//°´¼ü°´ÏÂ
+		if(++Voltage_Count==100) Voltage=Voltage_All/100,Voltage_All=0,Voltage_Count=0;//æ±‚å¹³å‡å€¼ è·å–ç”µæ± ç”µå‹	   
+		if(KEY==0)	//æŒ‰é”®æŒ‰ä¸‹
 		{
 			if(Keytimes<300)	Keytimes++;
 		}
 		else
 		{
-			if(Keytimes>30 && Keytimes<300)  {Kaysta=1;	N_Beep(1);}//±ê¼Ç°´¼ü¶Ì°´
-			if(Keytimes==300)	{ Kaysta=2;N_Beep(2);}				//±ê¼Ç°´¼ü³¤°´
+			if(Keytimes>30 && Keytimes<300)  {Kaysta=1;	N_Beep(1);}//æ ‡è®°æŒ‰é”®çŸ­æŒ‰
+			if(Keytimes==300)	{ Kaysta=2;N_Beep(2);}				//æ ‡è®°æŒ‰é”®é•¿æŒ‰
 			Keytimes=0;
 		}	
 		if(PS2_Stick<8) PS2_Stick++;
 		if(PS2_Stick==4)
 		{	
 			if(WorkMode==1){
-				if(!PS2_RedLight()) //ÅĞ¶ÏÊÖ±úÊÇ·ñÎªºìµÆÄ£Ê½£¬ÊÇ£¬Ö¸Ê¾µÆLEDµãÁÁ
-					PS2_Flag=1;	//±ê¼ÇÎªºìµÆÄ£Ê½
+				if(!PS2_RedLight()) //åˆ¤æ–­æ‰‹æŸ„æ˜¯å¦ä¸ºçº¢ç¯æ¨¡å¼ï¼Œæ˜¯ï¼ŒæŒ‡ç¤ºç¯LEDç‚¹äº®
+					PS2_Flag=1;	//æ ‡è®°ä¸ºçº¢ç¯æ¨¡å¼
 				else
-					PS2_Flag=0; //±ê¼ÇÎªÂÌµÆÄ£Ê½
+					PS2_Flag=0; //æ ‡è®°ä¸ºç»¿ç¯æ¨¡å¼
 			}
 		}
 		if(PS2_Stick==8)
 		{	
 			if(WorkMode==1){
-				if(PS2_Flag)	//ÊÇºìµÆÄ£Ê½	
+				if(PS2_Flag)	//æ˜¯çº¢ç¯æ¨¡å¼	
 				{	
-					key=PS2_DataKey();	 //ÊÖ±ú°´¼ü²¶»ñ´¦Àí
+					key=PS2_DataKey();	 //æ‰‹æŸ„æŒ‰é”®æ•è·å¤„ç†
 				}
 			}
 				PS2_Stick=0;
@@ -73,7 +73,7 @@ void TIM6_IRQHandler(void)
 		if(Contorl_stick==4)
 		{
 			Contorl_stick=0;
-			//Read_Encoder();//¶Á±àÂëÆ÷		
+			//Read_Encoder();//è¯»ç¼–ç å™¨		
 		}
 	
 		if(WorkMode==2)
@@ -93,7 +93,7 @@ void TIM6_IRQHandler(void)
 			Avoid_Control();
 		}
 	}	
-	TIM6->SR&=~(1<<0);//Çå³ıÖĞ¶Ï±êÖ¾Î» 	    
+	TIM6->SR&=~(1<<0);//æ¸…é™¤ä¸­æ–­æ ‡å¿—ä½ 	    
 }
 
 void Ps2_Control(void)
@@ -232,12 +232,12 @@ void Avoid_Control(void)
 {
 	 if(Distance1>=MIN_DIS_AVOID)  //MIN=70
 				//map(Distance1,MIN_DIS_AVOID,150,40,70);
-				Set_Motor(2000, -2000,-2000, 2000);          //ºóÍË
+				Set_Motor(2000, -2000,-2000, 2000);          //åé€€
   else if(Distance1>50 && Distance1<MIN_DIS_AVOID){
 				Set_Motor(2500, 2500,2500, 2500);
   }
   else {
-			Set_Motor(-2000, 2000,2000, -2000);        //Ç°½ø
+			Set_Motor(-2000, 2000,2000, -2000);        //å‰è¿›
 		
   }
 }
