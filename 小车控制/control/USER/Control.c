@@ -17,9 +17,9 @@ float Voltage_Count,Voltage_All;  //电压采样相关变量
 unsigned char nmr=0;
 
 short int RC_Last=0;
-unsigned char Contorl_stick=0;
-unsigned char PS2_Stick=0;
-unsigned char PS2_Flag=0;
+unsigned char Contorl_stick=0;//控制杆；
+unsigned char PS2_Stick=0;//决定手柄工作模式
+unsigned char PS2_Flag=0;//决定手柄处于红灯（适用于高精度游戏）or绿灯模式
 unsigned char ServoCount=0;
 
 u32 key;
@@ -29,7 +29,7 @@ void Avoid_Control(void);
 
 void TIM6_IRQHandler(void) //TIM6为STM32基础定时器；中断服务函数；
 { 		    		  			    
-	if(TIM6->SR&0X0001)//溢出中断
+	if(TIM6->SR&0X0001)//判断是否溢出中断；若检测出发生了中断（CPU停止工作），则执行以下程序
 	{		
 		Control_Flag=1;		
 		if(++ServoCount>=4)
@@ -41,7 +41,7 @@ void TIM6_IRQHandler(void) //TIM6为STM32基础定时器；中断服务函数；
 		if(++Voltage_Count==100) Voltage=Voltage_All/100,Voltage_All=0,Voltage_Count=0;//求平均值 获取电池电压	   
 		if(KEY==0)	//按键按下
 		{
-			if(Keytimes<300)	Keytimes++;
+			if(Keytimes<300)	Keytimes++;//<30?
 		}
 		else
 		{
@@ -53,7 +53,7 @@ void TIM6_IRQHandler(void) //TIM6为STM32基础定时器；中断服务函数；
 		if(PS2_Stick==4)
 		{	
 			if(WorkMode==1){
-				if(!PS2_RedLight()) //判断手柄是否为红灯模式，是，指示灯LED点亮
+				if(!PS2_RedLight()) //判断手柄是否为红灯模式，=0为是，指示灯LED点亮
 					PS2_Flag=1;	//标记为红灯模式
 				else
 					PS2_Flag=0; //标记为绿灯模式
@@ -106,8 +106,8 @@ void Ps2_Control(void)
 	  Set_Motor(Motor_Speed[0]*25, Motor_Speed[1]*25,Motor_Speed[2]*25,Motor_Speed[3]*25); //then set motor speed
 		switch (key)
 		{
-			case PSB_PAD_DOWN:
-				servoPwmDutyTemp = ServoPwmDuty[1];
+			case PSB_PAD_DOWN://持续按住向下按钮
+				servoPwmDutyTemp = ServoPwmDuty[1];//通过pwm占空比来控制舵机的转向
 				servoPwmDutyTemp += 2;
 				if(servoPwmDutyTemp >= 2500)
 				{
